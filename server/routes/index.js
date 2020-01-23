@@ -3,6 +3,7 @@
 const printRequestURL = true,
     auth = require('../services/auth'),
     userAPIRoute = require('./user_api'),
+    adminAPIRoute = require('./admin_api'),
     loginRoute = require('../routes/login');
 
 function init(server) {
@@ -30,6 +31,7 @@ function init(server) {
     });
 
     server.use('/user',auth.authenticateUserSession,userAPIRoute);
+    server.use('/admin',auth.authenticateAdminSession,adminAPIRoute);
     server.use('/auth',loginRoute);
 
 }

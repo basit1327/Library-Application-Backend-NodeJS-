@@ -41,7 +41,7 @@ async function userLogin (req,res){
 					res.send({status:400,detail:'studentId or password is not correct'})
 				}
 			} else {
-				res.send({status: 400, detail: 'something went wrong while trying to login'});
+				res.send({status: 400, detail: 'invalid email or password'});
 			}
 		} else {
 			res.send({status: 400, detail: 'something went wrong while trying to login'});

@@ -95,7 +95,48 @@ async function authenticateUserSession(req,res,next){
 			if ( _.has(dbRes, '[0].id') ) {
 				if ( _.has(dbRes,'[0].id') ) {
 					if ( dbRes[0].hash==sessionHash){
-						req.userId = dbRes[0].id;
+						req.userId = dbRes[0].user_id;
+						next();
+					}
+				}else{
+					res.send({status:440,detail:'session expire'});
+				}
+			} else {
+				res.send({status:440,detail:'session expire'});
+			}
+		}
+		else {
+			res.send({status:440,detail:'session expire'});
+		}
+	}
+	catch (e) {
+		console.log('Exception: ', e);
+		res.send({status:440,detail:'session expire'});
+	} finally {
+		if ( connection ) {
+			connection.release();
+		}
+	}
+}
+
+async function authenticateAdminSession(req,res,next){
+	let sessionHash = req.headers.authorization;
+	if ( !sessionHash ){
+		res.send({status:440,detail:'session expire'});
+		return;
+	}
+	let connection;
+	try {
+		connection = await new sessionDBConnection().getConnection();
+		if ( connection ) {
+			let dbRes = await connection.query(`SELECT
+			id,hash,admin_id,created_at,status
+			FROM admin_session where hash='${sessionHash}' and status=1`);
+
+			if ( _.has(dbRes, '[0].id') ) {
+				if ( _.has(dbRes,'[0].id') ) {
+					if ( dbRes[0].hash==sessionHash){
+						req.adminId = dbRes[0].admin_id;
 						next();
 					}
 				}else{
@@ -123,5 +164,6 @@ async function authenticateUserSession(req,res,next){
 module.exports = {
 	getAdminSessionDetail,
 	getUserSessionDetail,
-	authenticateUserSession
+	authenticateUserSession,
+	authenticateAdminSession
 };
