@@ -3,8 +3,8 @@
 const
 	express = require('express'),
 	catalogController = require('../../controllers/admin_api/catalog'),
-	eBookController = require('../../controllers/user_api/ebook'),
-	paperController = require('../../controllers/user_api/paper'),
+	eBookController = require('../../controllers/admin_api/ebook'),
+	paperController = require('../../controllers/admin_api/paper'),
 	dashboardController = require('../../controllers/admin_api/dashboard')
 
 let router = express.Router();

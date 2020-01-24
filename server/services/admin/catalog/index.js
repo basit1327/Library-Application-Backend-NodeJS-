@@ -29,6 +29,7 @@ async function getCatalogBooks (req,res){
 }
 
 
+
 function generateRandomString(length) {
 	var text = "";
 	var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -87,6 +88,10 @@ function getFileExtension(mimeType){
 		return '.jpeg';
 	}
 }
+
+
+
+
 
 async function addNewCatalogBook(req,res) {
 	req.savedPic = [];  // multer will push saved images in this array attached with req
@@ -154,8 +159,8 @@ async function updateCatalogBook(req,res) {
 		}
 		else {
 			try {
-				let {isbn,title,author,edition,availability,rack,cover} = JSON.parse(req.body.data);
-				if (!isbn || !title || !author || !edition || !availability || !rack || !cover) { // If No Form is submitted
+				let {id,isbn,title,author,edition,availability,rack,cover} = JSON.parse(req.body.data);
+				if (!id || !isbn || !title || !author || !edition || !availability || !rack || !cover) { // If No Form is submitted
 					res.send({status:400,detail:'Please provide all details'});
 				}
 				else {
@@ -163,7 +168,7 @@ async function updateCatalogBook(req,res) {
 					if ( req.savedPic.length>0){
 						bookCover = req.savedPic[0];
 					}
-					updateCatalogBooksWithDetail(isbn,title,author,edition,bookCover,rack,availability,res);
+					updateCatalogBooksWithDetail(id, isbn,title,author,edition,bookCover,rack,availability,res);
 				}
 			}
 			catch (e) {
@@ -174,7 +179,7 @@ async function updateCatalogBook(req,res) {
 	});
 }
 
-async function updateCatalogBooksWithDetail (isbn,title,author,edition,cover,rack,availability,res){
+async function updateCatalogBooksWithDetail (id,isbn,title,author,edition,cover,rack,availability,res){
 	let connection;
 	try {
 		connection = await new DbConnection().getConnection();
@@ -187,7 +192,8 @@ async function updateCatalogBooksWithDetail (isbn,title,author,edition,cover,rac
 			cover = '${cover}',
 			rack_number = '${rack}',
 			availability = '${availability}',
-			added_at = '${new Date().getTime()}'`);
+			added_at = '${new Date().getTime()}'
+			WHERE id=${id}`);
 
 			if ( dbRes.affectedRows ){
 				res.send({status:200,detail:'Book detail has been updated'})
