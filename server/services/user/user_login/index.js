@@ -58,6 +58,48 @@ async function userLogin (req,res){
 	}
 }
 
+async function userRegister (req,res){
+	let connection;
+	try {
+		let {name,studentId,password} = req.body;
+		if ( !name || !studentId || !password ) {
+			res.send({status:400,detail:'Invalid request'});
+			return;
+		}
+
+		connection = await new DbConnection().getConnection();
+		if ( connection ) {
+			let dbRes = await connection.query(`INSERT INTO 
+				user_account
+				(student_id,password,name,created_at)
+				VALUES (?,?,?,?)`,[studentId,password,name,new Date().getTime()]);
+			if ( dbRes.affectedRows>0 ) {
+				res.send({status:200,detail:'Account created, waiting to get approved'})
+			} else {
+				res.send({status: 400, detail: 'Oops, something went wrong'});
+			}
+		} else {
+			res.send({status: 400, detail: 'something went wrong while trying to create account'});
+		}
+	}
+	catch (e) {
+		let es = e.toString();
+		if ( es.includes('Duplicate entry') ){
+			res.send({status: 400, detail: 'Account with this student id is already created'});
+		}
+		else {
+			res.send({status: 400, detail: 'something went wrong while trying to  create account'});
+			console.log('Exception: ', e);
+		}
+	}
+	finally {
+		if ( connection ) {
+			connection.release();
+		}
+	}
+}
+
+
 async function userLogOut (req,res){
 	let sessionData = await auth.getUserSessionDetail(req.headers.authorization);
 	if(sessionData instanceof Error){
@@ -132,5 +174,6 @@ async function deleteSession(sessionId){
 
 module.exports = {
 	userLogin,
-	userLogOut
+	userLogOut,
+	userRegister
 };

@@ -10,7 +10,7 @@ async function getEBookList (req,res){
 	try {
 		connection = await new DbConnection().getConnection();
 		if ( connection ) {
-			let dbRes = await connection.query(`SELECT * FROM ebook`);
+			let dbRes = await connection.query(`SELECT * FROM ebook order by id desc`);
 			res.send({status:200,detail:'List of eBooks',data:dbRes})
 		} else {
 			res.send({status: 400, detail: 'something went wrong while getting eBooks'});

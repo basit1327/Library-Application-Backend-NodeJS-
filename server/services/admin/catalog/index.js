@@ -11,7 +11,7 @@ async function getCatalogBooks (req,res){
 	try {
 		connection = await new DbConnection().getConnection();
 		if ( connection ) {
-			let dbRes = await connection.query(`SELECT * FROM catalog`);
+			let dbRes = await connection.query(`SELECT * FROM catalog order by id desc`);
 			res.send({status:200,detail:'List of books in catalog',data:dbRes})
 		} else {
 			res.send({status: 400, detail: 'something went wrong while getting books in catalog'});

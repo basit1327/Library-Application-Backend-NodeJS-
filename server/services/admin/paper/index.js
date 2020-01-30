@@ -7,7 +7,7 @@ async function getExamPapersList (req,res){
 	try {
 		connection = await new DbConnection().getConnection();
 		if ( connection ) {
-			let dbRes = await connection.query(`SELECT * FROM paper`);
+			let dbRes = await connection.query(`SELECT * FROM paper order by id desc`);
 			res.send({status:200,detail:'List of Exam papers',data:dbRes})
 		} else {
 			res.send({status: 400, detail:'something went wrong while getting exam papers'});
