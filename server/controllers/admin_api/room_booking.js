@@ -9,5 +9,6 @@ let router = express.Router();
 router.get('/get_pending', roomBookingServices.getBookingRequests);
 router.get('/get_reserved', roomBookingServices.getReservedBookings);
 router.get('/approve', roomBookingServices.approveRoomBooking);
+router.get('/reject', roomBookingServices.rejectRoomBooking);
 
 module.exports = router;

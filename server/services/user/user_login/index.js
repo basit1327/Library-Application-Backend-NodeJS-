@@ -18,6 +18,7 @@ async function userLogin (req,res){
 			let dbRes = await connection.query(`SELECT 
 				id,
 				student_id,
+				status,
 				name
 				from user_account
 				where student_id = '${studentId}' AND password = '${password}'`);
@@ -25,6 +26,9 @@ async function userLogin (req,res){
 				if ( _.has(dbRes, '[0].id') ) {
 					if ( dbRes[0].status==0 ){
 						res.send({status:400,detail:'Account has been deleted'});
+					}
+					else if ( dbRes[0].status==2 ) {
+						res.send({status:400,detail:'Account is waiting for approval'});
 					}
 					else {
 						let hash = md5(new Date()+'IUKL');
@@ -38,10 +42,10 @@ async function userLogin (req,res){
 					}
 				}
 				else {
-					res.send({status:400,detail:'studentId or password is not correct'})
+					res.send({status:400,detail:'Wrong ID or Password'})
 				}
 			} else {
-				res.send({status: 400, detail: 'invalid email or password'});
+				res.send({status: 400, detail: 'Wrong ID or Password'});
 			}
 		} else {
 			res.send({status: 400, detail: 'something went wrong while trying to login'});

@@ -6,9 +6,15 @@ const _ = require('lodash'),
 async function getCatalogBooks (req,res){
 	let connection;
 	try {
+		let text = req.query.text || '';
 		connection = await new DbConnection().getConnection();
 		if ( connection ) {
-			let dbRes = await connection.query(`SELECT * FROM catalog`);
+			let dbRes = await connection.query(`SELECT * FROM catalog
+			where 
+			isbn LIKE  '%${text}%' OR 
+			title LIKE  '%${text}%' OR 
+			author LIKE  '%${text}%' 
+			`);
 			if ( _.has(dbRes,'[0].cover') ){
 				dbRes.forEach(e=>{
 					e.cover = imageDir+e.cover;

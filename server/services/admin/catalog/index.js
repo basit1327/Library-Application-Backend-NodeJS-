@@ -101,7 +101,7 @@ async function addNewCatalogBook(req,res) {
 		}
 		else {
 			try {
-				let {isbn,title,author,edition,availability,rack} = JSON.parse(req.body.data);
+				let {isbn,title,author,edition,availability,rack,description} = JSON.parse(req.body.data);
 				if (!isbn || !title || !author || !edition || !availability || !rack) { // If No Form is submitted
 					res.send({status:400,detail:'Please provide all details'});
 				}
@@ -110,7 +110,7 @@ async function addNewCatalogBook(req,res) {
 					if ( req.savedPic.length>0){
 						bookCover = req.savedPic[0];
 					}
-					addCatalogBooksWithDetail(isbn,title,author,edition,bookCover,rack,availability,res);
+					addCatalogBooksWithDetail(isbn,title,author,edition,bookCover,rack,availability,description,res);
 				}
 			}
 			catch (e) {
@@ -121,14 +121,14 @@ async function addNewCatalogBook(req,res) {
 	});
 }
 
-async function addCatalogBooksWithDetail (isbn,title,author,edition,cover,rack,availability,res){
+async function addCatalogBooksWithDetail (isbn,title,author,edition,cover,rack,availability,description,res){
 	let connection;
 	try {
 		connection = await new DbConnection().getConnection();
 		if ( connection ) {
 			let dbRes = await connection.query(`INSERT INTO catalog 
-			(isbn,title,author,edition,cover,rack_number,availability,added_at)
-			VALUES('${isbn}','${title}','${author}','${edition}','${cover}','${rack}','${availability}','${new Date().getTime()}')
+			(isbn,title,author,edition,cover,rack_number,availability,description,added_at)
+			VALUES('${isbn}','${title}','${author}','${edition}','${cover}','${rack}','${availability}','${description || ''}','${new Date().getTime()}')
 			`);
 			if ( dbRes.affectedRows ){
 				res.send({status:200,detail:'Book added to catalog'})
@@ -159,7 +159,7 @@ async function updateCatalogBook(req,res) {
 		}
 		else {
 			try {
-				let {id,isbn,title,author,edition,availability,rack,cover} = JSON.parse(req.body.data);
+				let {id,isbn,title,author,edition,availability,rack,cover,description} = JSON.parse(req.body.data);
 				if (!id || !isbn || !title || !author || !edition || !availability || !rack || !cover) { // If No Form is submitted
 					res.send({status:400,detail:'Please provide all details'});
 				}
@@ -168,7 +168,7 @@ async function updateCatalogBook(req,res) {
 					if ( req.savedPic.length>0){
 						bookCover = req.savedPic[0];
 					}
-					updateCatalogBooksWithDetail(id, isbn,title,author,edition,bookCover,rack,availability,res);
+					updateCatalogBooksWithDetail(id, isbn,title,author,edition,bookCover,rack,availability,description,res);
 				}
 			}
 			catch (e) {
@@ -179,7 +179,7 @@ async function updateCatalogBook(req,res) {
 	});
 }
 
-async function updateCatalogBooksWithDetail (id,isbn,title,author,edition,cover,rack,availability,res){
+async function updateCatalogBooksWithDetail (id,isbn,title,author,edition,cover,rack,availability,description,res){
 	let connection;
 	try {
 		connection = await new DbConnection().getConnection();
@@ -192,6 +192,7 @@ async function updateCatalogBooksWithDetail (id,isbn,title,author,edition,cover,
 			cover = '${cover}',
 			rack_number = '${rack}',
 			availability = '${availability}',
+			description = '${description||''}',
 			added_at = '${new Date().getTime()}'
 			WHERE id=${id}`);
 

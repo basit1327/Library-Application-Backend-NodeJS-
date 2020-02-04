@@ -195,6 +195,38 @@ async function getReservedBookings(req,res){
 	}
 }
 
+async function rejectRoomBooking(req,res){
+	let bookingId = req.query.bookingId;
+	if ( !bookingId ){
+		res.send({status:400,detail:"invalid request"});
+		return;
+	}
+	else{
+		let connection;
+		try {
+			connection = await new DbConnection().getConnection();
+			if ( connection ) {
+				let bookingDetail = await connection.query(`UPDATE 
+				room_booking_request
+				SET status = 3
+ 				where id = ${bookingId}`);
+				res.send({status:200,detail:'Successfully reject a booking request'})
+			} else {
+				console.log('something went wrong in rejecting Booking');
+			}
+		}
+		catch (e) {
+			console.log('something went wrong in rejecting Booking');
+			console.log('Exception: ', e);
+		}
+		finally {
+			if ( connection ) {
+				connection.release();
+			}
+		}
+	}
+}
+
 
 async function approveRoomBooking(req,res){
 	let bookingId = req.query.bookingId;
@@ -289,5 +321,6 @@ async function approveABooking(requestId,userId,checkinTime,checkoutTime,roomId,
 module.exports = {
 	getBookingRequests,
 	approveRoomBooking,
-	getReservedBookings
+	getReservedBookings,
+	rejectRoomBooking
 };

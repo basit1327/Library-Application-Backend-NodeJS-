@@ -2,7 +2,7 @@
 
 const
 	express = require('express'),
-	examPaperServices = require('../../services/user/paper');
+	examPaperServices = require('../../services/admin/paper');
 
 let router = express.Router();
 

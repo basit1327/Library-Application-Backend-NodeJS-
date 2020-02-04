@@ -7,7 +7,7 @@ async function getMyRoomBookings ( req, res){
 	try {
 		connection = await new DbConnection().getConnection();
 		if ( connection ) {
-			let dbRes = await connection.query(`SELECT * FROM room_booking_request where user_id = ${req.userId}`);
+			let dbRes = await connection.query(`SELECT * FROM room_booking_request where user_id = ${req.userId} order by id desc`);
 			res.send({status:200,detail:'List of your all bookings',data:dbRes})
 		} else {
 			res.send({status: 400, detail: 'something went wrong while getting room bookings'});
