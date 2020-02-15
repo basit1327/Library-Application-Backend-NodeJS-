@@ -2,6 +2,7 @@
 const _ = require('lodash'),
 	md5 = require('md5'),
 	auth = require('../../auth'),
+	{invalidQueryResult,failedToGetDatabaseConnection} = require('../../../../configs/res_codes'),
 	DbConnection = require('../../../dataaccesss/dbconnection').DbConnection;
 
 async function adminLogin (req,res){
@@ -20,7 +21,7 @@ async function adminLogin (req,res){
 				staff_id,
 				name
 				from admin_account
-				where staff_id = '${staffId}' AND password = '${password}'`);
+				where staff_id = ? AND password = ?`,[staffId,password]);
 			if ( _.has(dbRes, '[0].id') ) {
 				if ( _.has(dbRes, '[0].id') ) {
 					if ( dbRes[0].status==0 ){

@@ -3,6 +3,7 @@ const _ = require('lodash'),
 	imageDir = 'images/',
 	storageDir = './public/images/',
 	dateUtil = require('../../../utils/date_utils'),
+	{invalidQueryResult,failedToGetDatabaseConnection} = require('../../../../configs/res_codes'),
 	multer = require('multer'),
 	DbConnection = require('../../../dataaccesss/dbconnection').DbConnection;
 
@@ -128,8 +129,8 @@ async function addCatalogBooksWithDetail (isbn,title,author,edition,cover,rack,a
 		if ( connection ) {
 			let dbRes = await connection.query(`INSERT INTO catalog 
 			(isbn,title,author,edition,cover,rack_number,availability,description,added_at)
-			VALUES('${isbn}','${title}','${author}','${edition}','${cover}','${rack}','${availability}','${description || ''}','${new Date().getTime()}')
-			`);
+			VALUES(?,?,?,?,?,?,?,?,?)
+			`,[isbn,title,author,edition,cover,rack,availability,description||'',new Date().getTime()]);
 			if ( dbRes.affectedRows ){
 				res.send({status:200,detail:'Book added to catalog'})
 			}
@@ -185,16 +186,18 @@ async function updateCatalogBooksWithDetail (id,isbn,title,author,edition,cover,
 		connection = await new DbConnection().getConnection();
 		if ( connection ) {
 			let dbRes = await connection.query(`UPDATE catalog 
-			SET isbn = '${isbn}',
-			title = '${isbn}',
-			author = '${author}',
-			edition = '${edition}',
-			cover = '${cover}',
-			rack_number = '${rack}',
-			availability = '${availability}',
-			description = '${description||''}',
-			added_at = '${new Date().getTime()}'
-			WHERE id=${id}`);
+			SET isbn = ?,
+			title = ?,
+			author = ?,
+			edition = ?,
+			cover = ?,
+			rack_number = ?,
+			availability = ?,
+			description = ?,
+			added_at = ?
+			WHERE id= ?`, [
+				isbn,title,author,edition,cover,rack,availability,description||'',new Date().getTime(),id
+			]);
 
 			if ( dbRes.affectedRows ){
 				res.send({status:200,detail:'Book detail has been updated'})
@@ -223,7 +226,7 @@ async function deleteCatalogBook(req,res) {
 	try {
 		connection = await new DbConnection().getConnection();
 		if ( connection ) {
-			let dbRes = await connection.query(`DELETE FROM catalog WHERE id=${id}`);
+			let dbRes = await connection.query(`DELETE FROM catalog WHERE id=?`,[id]);
 			if ( dbRes.affectedRows ){
 				res.send({status:200,detail:'Book deleted from catalog'})
 			}
