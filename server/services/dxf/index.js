@@ -47,13 +47,18 @@ async function convertDxfToGeoJSON(req,res) {
 					if(result){
 						writeSuccessExecution('GeoJSON Created for '+req.savedFile)
 					}
-					let jsonData = await readLayerFromGeoJSONFile(`${storageDirGeoJSON + req.savedFile.replace('.dxf','')}.geojson`)
+					let jsonData = await readGeoJSONFromGeoJSONFile(`${storageDirGeoJSON + req.savedFile.replace('.dxf','')}.geojson`)
+					let features = jsonData.features;
+					let layersSet = new Set();
+					features.map(e=>{
+						layersSet.add(e.properties.Layer)
+					})
 					res.send({
 						status:200,
 						message: 'DXF to GeoJSON conversion succeed',
 						data: {
 							fileName: req.savedFile.replace('.dxf','')+'.json',
-							layers: jsonData
+							layers: Array.from(layersSet)
 						}
 					})
 				}
@@ -100,26 +105,43 @@ async function commandExecutor(command,name){
 	})
 }
 
-async function readLayerFromGeoJSONFile(filePath){
+async function readGeoJSONFromGeoJSONFile(filePath){
 	return new Promise((resolve, reject) => {
 		fs.readFile(filePath, 'utf8' , (err, data) => {
 			if (err) {
 				console.error(err)
-				reject('Failed to read geojson file');
+				reject(new Error('Failed to read geojson file, No such a file'));
 			}
 			else {
 				let jsonData = JSON.parse(data);
-				let features = jsonData.features;
-				let layersSet = new Set();
-				features.map(e=>{
-					layersSet.add(e.properties.Layer)
-				})
-				resolve(Array.from(layersSet));
+				resolve(jsonData);
 			}
 		})
 	})
 }
 
+async function layerFilterGeoJSONFile(req,res){
+	try {
+		let data = await readGeoJSONFromGeoJSONFile(`${storageDirGeoJSON + req.body.fileName}`)
+		if(!data){
+			throw new Error('Failed to read file, file not exist or corrupted')
+		}
+		let features = data.features;
+		let requiredLayers =  req.body.layers;
+		let filteredRecord = features.filter(e=>{
+			return requiredLayers.indexOf(e.properties.Layer) !== -1
+		})
+
+		data.features = filteredRecord;
+		res.send(data)
+	}
+	catch (e){
+		console.log(e)
+		res.send({status:400, message: e.message ? e.message : "Something went wrong..."})
+	}
+}
+
 module.exports = {
-	convertDxfToGeoJSON
+	convertDxfToGeoJSON,
+	layerFilterGeoJSONFile
 };
