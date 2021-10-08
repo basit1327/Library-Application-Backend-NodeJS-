@@ -1,10 +1,6 @@
 'use strict';
 
-const printRequestURL = true,
-    auth = require('../services/auth'),
-    userAPIRoute = require('./user_api'),
-    adminAPIRoute = require('./admin_api'),
-    loginRoute = require('../routes/login');
+const apiRoute = require('./api');
 
 function init(server) {
 
@@ -27,12 +23,10 @@ function init(server) {
     });
 
     server.get('/', function (req, res) {
-        res.send('IKUL')
+        res.send('Planloader GIS Service In NodeJS')
     });
 
-    server.use('/user',auth.authenticateUserSession,userAPIRoute);
-    server.use('/admin',auth.authenticateAdminSession,adminAPIRoute);
-    server.use('/auth',loginRoute);
+    server.use('/api',apiRoute);
 
 }
 

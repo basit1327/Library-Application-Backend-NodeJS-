@@ -34,8 +34,7 @@ start = function () {
         port = server.get('port');
 
     server.listen(port, function () {
-        console.log(`Starting the Http instance of IUKL Server at: ${hostname} : ${port}`);
-        console.log("Http instance of IUKL Server is Live!!!");
+        console.log("Http instance of Planloader GIS Service is Live!");
     });
 };
 

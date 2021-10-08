@@ -137,7 +137,7 @@ INSERT INTO `catalog` (`id`, `isbn`, `title`, `author`, `edition`, `cover`, `rac
 -- --------------------------------------------------------
 
 --
--- Table structure for table `ebook`
+-- Table structure for table `dxf`
 --
 
 CREATE TABLE `ebook` (
@@ -154,7 +154,7 @@ CREATE TABLE `ebook` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `ebook`
+-- Dumping data for table `dxf`
 --
 
 INSERT INTO `ebook` (`id`, `isbn`, `title`, `author`, `edition`, `price`, `publish_date`, `file`, `added_at`, `status`) VALUES
@@ -450,7 +450,7 @@ ALTER TABLE `catalog`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `ebook`
+-- Indexes for table `dxf`
 --
 ALTER TABLE `ebook`
   ADD PRIMARY KEY (`id`);
@@ -519,7 +519,7 @@ ALTER TABLE `catalog`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
--- AUTO_INCREMENT for table `ebook`
+-- AUTO_INCREMENT for table `dxf`
 --
 ALTER TABLE `ebook`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;

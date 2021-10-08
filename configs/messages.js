@@ -6,7 +6,7 @@ httpMessage = function(res, httpStatusCode, message , statusWithMessage){
 
 module.exports = Object.freeze({
     USER_NOT_AUTHORIZED: "You are not Authorized!",
-    SESSION_EXPIRE: "You login session has expires",
+    SESSION_EXPIRE: "You dxf session has expires",
     RE_LOGIN: "Please Login Again",
     MISSING : (field)=>{  + " is missing"},
     CANNOT_AUTHENTICATE: "Cannot Authenticate the User at the Moment",

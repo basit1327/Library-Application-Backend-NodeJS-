@@ -2,10 +2,10 @@
 
 const
 	express = require('express'),
-	eBookServices = require('../../services/user/ebook');
+	dxfController = require('../../controllers/dxf');
 
 let router = express.Router();
 
-router.get('/get_all', eBookServices.getEBookList);
+router.use('/dxf', dxfController);
 
 module.exports = router;
