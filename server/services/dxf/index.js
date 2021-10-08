@@ -57,7 +57,7 @@ async function convertDxfToGeoJSON(req,res) {
 						status:200,
 						message: 'DXF to GeoJSON conversion succeed',
 						data: {
-							fileName: req.savedFile.replace('.dxf','')+'.json',
+							fileName: req.savedFile.replace('.dxf','.geojson'),
 							layers: Array.from(layersSet)
 						}
 					})
